@@ -1,5 +1,7 @@
-package com.example.securitydemo.entity;
+package com.example.securitydemo.repository;
 
+
+import com.example.securitydemo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

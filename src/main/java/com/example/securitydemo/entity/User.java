@@ -1,10 +1,15 @@
 package com.example.securitydemo.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
