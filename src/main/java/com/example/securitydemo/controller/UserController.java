@@ -1,7 +1,6 @@
 package com.example.securitydemo.controller;
 
 import com.example.securitydemo.entity.User;
-import com.example.securitydemo.repository.UserRepository;
 import com.example.securitydemo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,15 +19,14 @@ public class UserController {
 
     @GetMapping("")
     public String listUsers(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "userList";
+        model.addAttribute("users", userService.findAll());
+        return "user";
     }
 
     @GetMapping("/{id}")
-    public String getUser(@PathVariable("id") Long id, Model model) {
-        User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        model.addAttribute("user", user);
+    public String getUser(@PathVariable("id") Integer id, Model model) {
+        model.addAttribute("user", userService.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("Invalid user Id:" + id)));
         return "userDetails";
     }
 
