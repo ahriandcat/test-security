@@ -1,15 +1,15 @@
 package com.example.securitydemo.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+@Builder
+public class AuthenticationRequest {
     private String email;
     private String password;
 }

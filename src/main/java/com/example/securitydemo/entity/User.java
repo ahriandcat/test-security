@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column(name = "avatar")
-    private Byte avatar;
+    private Byte[] avatar;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
