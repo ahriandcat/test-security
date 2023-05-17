@@ -19,13 +19,21 @@ public class DefaultRoleInitializer {
 
     @PostConstruct
     public void init() {
-        Role defaultRole = roleRepository.findById(1).orElse(null);
+        Role defaultRoleAdmin = roleRepository.findById(1).orElse(null);
+        Role defaultRoleUser = roleRepository.findById(2).orElse(null);
 
-        if (defaultRole == null) {
-            defaultRole = new Role();
-            defaultRole.setId(1);
-            defaultRole.setRole("User");
-            roleRepository.save(defaultRole);
+        if (defaultRoleAdmin == null) {
+            defaultRoleAdmin = new Role();
+            defaultRoleAdmin.setId(1);
+            defaultRoleAdmin.setRole("Admin");
+            roleRepository.save(defaultRoleAdmin);
+        }
+
+        if (defaultRoleUser == null) {
+            defaultRoleUser = new Role();
+            defaultRoleUser.setId(2);
+            defaultRoleUser.setRole("User");
+            roleRepository.save(defaultRoleUser);
         }
     }
 }

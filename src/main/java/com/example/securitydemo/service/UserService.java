@@ -9,6 +9,7 @@ public interface UserService {
     List<User> findAll();
 
     Optional<User> findById(Integer id);
+    Optional<User> findByEmail(String email);
 
     void save(User user);
 }

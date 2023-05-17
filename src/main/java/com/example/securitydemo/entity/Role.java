@@ -1,5 +1,6 @@
 package com.example.securitydemo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class Role {
     private String role;
 
     @ManyToMany(mappedBy = "roles")
+    @JsonManagedReference
     private Set<User> users = new HashSet<>();
 
 }

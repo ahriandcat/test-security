@@ -1,5 +1,6 @@
 package com.example.securitydemo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,7 @@ public class User implements UserDetails {
     private Byte[] avatar;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
