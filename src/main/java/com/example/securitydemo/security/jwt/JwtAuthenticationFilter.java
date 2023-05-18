@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -46,6 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userEmail = jwtService.extractUsername(jwt);
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            System.out.println("+++++++++++++++++++++++");
+            userDetails.getAuthorities().forEach(System.out::println);
             var isTokenValid = tokenRepository.findByToken(jwt)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);

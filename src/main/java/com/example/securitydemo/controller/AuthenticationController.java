@@ -10,12 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +21,7 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         return ResponseEntity.ok(authenticationService.register(request));
@@ -40,9 +39,16 @@ public class AuthenticationController {
         authenticationService.refreshToken(request, response);
     }
 
+    @GetMapping("/oauth2")
+    public ResponseEntity<String> handleGoogleCallback(Principal principal) {
+        return ResponseEntity.ok("/html/index.html");
+    }
+
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        SecurityContextHolder.clearContext(); // Xóa thông tin xác thực trong SecurityContextHolder
         return ResponseEntity.ok("Logout thành công");
     }
+
+
 }

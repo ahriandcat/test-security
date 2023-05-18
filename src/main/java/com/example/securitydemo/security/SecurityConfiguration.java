@@ -1,13 +1,18 @@
 package com.example.securitydemo.security;
 
+import com.example.securitydemo.entity.Role;
+import com.example.securitydemo.repository.RoleRepository;
 import com.example.securitydemo.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
@@ -32,14 +37,15 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf()
                 .disable()
+                .addFilterBefore(corsFilter(), ChannelProcessingFilter.class)
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
                 .requestMatchers("/api/v1/auth/logout")
                 .authenticated()
-                .requestMatchers("api/v1/user/**")
+                .requestMatchers("/api/v1/user/**")
                 .hasAnyRole("Admin","User")
-                .requestMatchers("api/v1/admin/**")
+                .requestMatchers("/api/v1/admin/**")
                 .hasRole("Admin")
                 .anyRequest()
                 .authenticated()
@@ -49,12 +55,12 @@ public class SecurityConfiguration {
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(corsFilter(), ChannelProcessingFilter.class)
                 .logout()
                 .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
-
+                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                .and()
+                .oauth2Login();
 
 
         return httpSecurity.build();

@@ -12,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter extends OncePerRequestFilter {
 
     @Override
