@@ -39,10 +39,10 @@ public class AuthenticationController {
         authenticationService.refreshToken(request, response);
     }
 
-    @GetMapping("/oauth2")
-    public ResponseEntity<String> handleGoogleCallback(Principal principal) {
-        return ResponseEntity.ok("/html/index.html");
-    }
+//    @GetMapping("/oauth2")
+//    public ResponseEntity<String> handleGoogleCallback() {
+//        return ResponseEntity.ok("success");
+//    }
 
 
     @PostMapping("/logout")

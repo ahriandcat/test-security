@@ -1,23 +1,21 @@
 package com.example.securitydemo.security;
 
-import com.example.securitydemo.entity.Role;
-import com.example.securitydemo.repository.RoleRepository;
 import com.example.securitydemo.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -28,25 +26,22 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
-    public CorsFilter corsFilter() {
-        return new CorsFilter();
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf()
                 .disable()
-                .addFilterBefore(corsFilter(), ChannelProcessingFilter.class)
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
                 .requestMatchers("/api/v1/auth/logout")
                 .authenticated()
                 .requestMatchers("/api/v1/user/**")
-                .hasAnyRole("Admin","User")
+                .hasAnyAuthority("Admin","User")
                 .requestMatchers("/api/v1/admin/**")
-                .hasRole("Admin")
+                .hasAuthority("Admin")
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -65,5 +60,18 @@ public class SecurityConfiguration {
 
         return httpSecurity.build();
     }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.setAllowCredentials(false);
+        corsConfiguration.setMaxAge(3600L);
+        corsConfiguration.addExposedHeader("Authorization");
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+        return source;
+    }
 }
