@@ -1,19 +1,24 @@
 package com.example.securitydemo.controller;
 
 
+import com.example.securitydemo.dto.GoogleUserInfo;
 import com.example.securitydemo.request.AuthenticationRequest;
 import com.example.securitydemo.request.RegisterRequest;
 import com.example.securitydemo.response.AuthenticationResponse;
+import com.example.securitydemo.security.GoogleAuthService;
 import com.example.securitydemo.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.Principal;
+import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +26,8 @@ import java.security.Principal;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final GoogleAuthService googleAuthService;
+
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
@@ -39,16 +46,22 @@ public class AuthenticationController {
         authenticationService.refreshToken(request, response);
     }
 
-//    @GetMapping("/oauth2")
-//    public ResponseEntity<String> handleGoogleCallback() {
-//        return ResponseEntity.ok("success");
-//    }
-
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Logout thành công");
     }
 
+
+
+    @GetMapping("/oauth2")
+    public ResponseEntity<?> handleGoogleCallback(OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+        try {
+            String name = oAuth2AuthenticationToken.getPrincipal().getAttribute("name");
+            return ResponseEntity.ok(name);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
+        }
+    }
 
 }

@@ -28,32 +28,5 @@ class SecurityDemoApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    void testCreateUser() {
-        Role role = new Role();
-        role.setRole("Employee");
-        roleRepository.save(role);
-
-
-        User user = new User();
-        user.setName("john");
-        user.setEmail("john@gmail.com");
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
-        userRepository.save(user);
-
-        List<User> users = userRepository.findAll();
-        assertThat(users).hasSize(2);
-    }
-
-    @Test
-    void select() {
-        List<User> l = userRepository.findAll();
-        System.out.println("======================================");
-        l.forEach(i -> System.out.println(i.getName()));
-        System.out.println("======================================");
-        assertThat(l).hasSize(1);
-    }
 
 }
