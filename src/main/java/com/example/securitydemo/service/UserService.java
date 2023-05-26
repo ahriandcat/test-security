@@ -12,4 +12,6 @@ public interface UserService {
     Optional<User> findByEmail(String email);
 
     void save(User user);
+
+    void processOAuthPostLogin(String email);
 }

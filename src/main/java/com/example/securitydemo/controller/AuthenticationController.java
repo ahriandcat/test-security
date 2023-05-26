@@ -51,15 +51,16 @@ public class AuthenticationController {
 
 
     @GetMapping("/oauth2")
-    public ResponseEntity<Object> handleGoogleCallback(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient user) {
+    public ResponseEntity<OAuth2RefreshToken> handleGoogleCallback(@RegisteredOAuth2AuthorizedClient("google") OAuth2AuthorizedClient user) {
         try {
             OAuth2RefreshToken refreshToken = user.getRefreshToken();
-            System.out.println("****************");
+            System.out.println("===========================");
             System.out.println(refreshToken);
             return ResponseEntity.ok(refreshToken);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
 }

@@ -1,6 +1,11 @@
 package com.example.securitydemo.security;
 
+import com.example.securitydemo.dto.DemoOAuth2User;
 import com.example.securitydemo.security.jwt.JwtAuthenticationFilter;
+import com.example.securitydemo.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.DefaultRedirectStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +13,18 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.io.IOException;
 
 
 @Configuration
@@ -26,6 +35,12 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
+    private final UserService userService;
+
+    @Bean
+    public DefaultRedirectStrategy redirectStrategy() {
+        return new DefaultRedirectStrategy();
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -59,10 +74,22 @@ public class SecurityConfiguration {
                 .oauth2Login()
                 .defaultSuccessUrl("/api/v1/auth/oauth2")
                 .userInfoEndpoint()
-                .userService(oAuth2UserService());
-
+                .userService(oAuth2UserService())
+                .and().successHandler((request, response, authentication) -> {
+                    DemoOAuth2User oauthUser = (DemoOAuth2User) authentication.getPrincipal();
+                    System.out.println("***************");
+                    System.out.println(oauthUser.getEmail());
+                    System.out.println(oauthUser.getName());
+                    System.out.println(oauthUser.getAttributes());
+                    System.out.println(oauthUser.getAuthorities());
+                    System.out.println("***************");
+//                    userService.processOAuthPostLogin(oauthUser.getEmail());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.sendRedirect("/api/v1/auth/oauth2");
+                });
         return httpSecurity.build();
     }
+
     @Bean
     public OAuth2UserService oAuth2UserService() {
         return new OAuth2UserService();

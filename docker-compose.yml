@@ -21,7 +21,7 @@ services:
     ports:
       - "8081:80"
     environment:
-      PMA_HOST: mysql_database-1
+      PMA_HOST: mysql_database
       PMA_USER: root
       PMA_PASSWORD: password
       PMA_ARBITRARY: 1

@@ -26,6 +26,10 @@ public class DemoOAuth2User implements OAuth2User {
     @Override
     public String getName() {
 //        System.out.println(oauth2User.<String>getAttribute("email"));
+        return oauth2User.getAttribute("name");
+    }
+
+    public String getEmail() {
         return oauth2User.getAttribute("email");
     }
 }
